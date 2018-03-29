@@ -55,6 +55,7 @@ class Game extends React.Component {
         squares: Array(9).fill(null),
         }],
         xIsNext: true,
+        stepNumber: 0,
     };
   }
   
@@ -72,9 +73,17 @@ class Game extends React.Component {
       history: history.concat([{
         squares: squares,
       }]),
+      stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
   }
+  
+  jumpTo(step){
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  };
   
   render() {
     // const works here, because each time the Board is rerendered, there is a new value for the status and so 
@@ -82,6 +91,16 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[history.length - 1];
     const winner = calculateWinner(current.squares);
+    
+    const moves = history.map( (step, move) => {
+      const descOfCurrMove = move ? `Go to move #${move}` : `Go to the beginning`;
+      
+      return (
+        <li id={move}>
+          <button onClick={() => this.jumpTo(move)}>{descOfCurrMove}</button>
+        </li>
+      );
+    });
     
     let status;
 
@@ -101,7 +120,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{/* TODO */}</ol>
+          <ol>{moves}</ol>
         </div>
       </div>
     );
