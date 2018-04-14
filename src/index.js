@@ -101,13 +101,7 @@ class Game extends React.Component {
       const descOfCurrMove = move ? `Go to move #${move} (row: ${Math.floor(step.newSquare / 3) + 1}, col: ${(step.newSquare % 3) + 1})` : `Go to the beginning`;
       
       // Add a computed style for each <li>
-      if (move === this.state.stepNumber){
-        bold = {
-          fontWeight: '800',
-        };
-      } else {
-        bold = null;
-      }
+      move === this.state.stepNumber ? bold = {fontWeight: '800'} : bold = null;
       
       return (
         <li id={move}>
