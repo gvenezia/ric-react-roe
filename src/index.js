@@ -95,13 +95,23 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    let bold = null;
     
     const moves = history.map( (step, move) => {
       const descOfCurrMove = move ? `Go to move #${move} (row: ${Math.floor(step.newSquare / 3) + 1}, col: ${(step.newSquare % 3) + 1})` : `Go to the beginning`;
       
+      // Add a computed style for each <li>
+      if (move === this.state.stepNumber){
+        bold = {
+          fontWeight: '800',
+        };
+      } else {
+        bold = null;
+      }
+      
       return (
         <li id={move}>
-          <button onClick={() => this.jumpTo(move)}>{descOfCurrMove}</button>
+          <button style={bold} onClick={() => this.jumpTo(move)}>{descOfCurrMove}</button>
         </li>
       );
     });
