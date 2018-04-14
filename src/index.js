@@ -99,7 +99,9 @@ class Game extends React.Component {
     let bold = null;
     
     const moves = history.map( (step, move) => {
-      const descOfCurrMove = move ? `Go to move #${move} (row: ${Math.floor(step.newSquare / 3) + 1}, col: ${(step.newSquare % 3) + 1})` : `Go to the beginning`;
+      const descOfCurrMove = move ? 
+        `Go to move #${move} (row: ${Math.floor(step.newSquare / 3) + 1}, col: ${(step.newSquare % 3) + 1})` :
+        `Go to the beginning`;
       
       // Add a computed style for each <li>
       move === this.state.stepNumber ? bold = {fontWeight: '800'} : bold = null;
@@ -111,13 +113,11 @@ class Game extends React.Component {
       );
     });
     
-    let status;
-
-    if (winner){
-      status = `Winner: ${winner}`;
-    } else {
-      status = this.state.xIsNext ? `Next player: X` : `Next player: O`;
-    }
+    let status = winner ?
+      `Winner: ${winner}` :
+      this.state.stepNumber === 9 ?
+      `This game's a draw!` :
+      this.state.xIsNext ? `Next player: X` : `Next player: O`;
     
     return (
       <div className="game">
