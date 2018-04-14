@@ -21,32 +21,33 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square 
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
     );
   }
-
+  
+  // Instead of hard coding, use loops to generate render the board
+  // Fill with the squares by looping through the rows and columns, 
+  // and pushing the squares into JSX wrappers
   render() {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
+    let num = 0;
+    let boardArr = [];
+    let squares = [[],[],[]];
+    
+    for (let row = 0; row < 3; row++){
+      for (let col = 0; col < 3; col++){
+        // for the first row, render the squares for each column and load eacn into the squares array
+        squares[row].push(this.renderSquare(num++));
+      }
+      
+      // with the loaded array, push them into the main boardArray with a html wrapper
+      boardArr.push(<div className="board-row">{squares[row]}</div>);
+    }
+    
+    // Now the loaded boardArr can be returned
+    return <div>{boardArr}</div> ;
   }
 }
 
