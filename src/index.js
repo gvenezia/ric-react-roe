@@ -9,6 +9,7 @@ import './index.css';
 function Square(props){
     return (
       <button 
+        style={props.style}
         className="square" 
         onClick={props.onClick} 
         >
@@ -19,9 +20,16 @@ function Square(props){
 
 class Board extends React.Component {
   renderSquare(i) {
+    let highlight = null;
+    
+    this.props.winResults && this.props.winResults.winCombo.indexOf(i) !== -1 ?
+      highlight = {backgroundColor: 'lightgrey'} :
+      null
+    
     return (
       <Square 
         key={i}
+        style={highlight}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
@@ -69,12 +77,13 @@ class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     
-    // Check for the end of the game
+    // Check for the end of game or already filled square before continuing
     if (calculateWinner(squares) || squares[i]){
       return;
     }
     
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    
     this.setState({
       history: history.concat([{
         squares: squares,
@@ -95,7 +104,8 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winResults = calculateWinner(current.squares);
+    
     let bold = null;
     
     const moves = history.map( (step, move) => {
@@ -108,13 +118,14 @@ class Game extends React.Component {
       
       return (
         <li id={move}>
-          <button style={bold} onClick={() => this.jumpTo(move)}>{descOfCurrMove}</button>
+          <button key={move} style={bold} 
+            onClick={() => this.jumpTo(move)}>{descOfCurrMove}</button>
         </li>
       );
     });
     
-    let status = winner ?
-      `Winner: ${winner}` :
+    let status = winResults ?
+      `Winner: ${winResults.winner}` :
       this.state.stepNumber === 9 ?
       `This game's a draw!` :
       this.state.xIsNext ? `Next player: X` : `Next player: O`;
@@ -124,11 +135,13 @@ class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
+            winResults={winResults}
             onClick={(i) => this.handleClick(i)}
           />
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button>toggle</button>
           <ol>{moves}</ol>
         </div>
       </div>
@@ -153,8 +166,12 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     // destructuring assignment
     const [a, b, c] = lines[i];
+    
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        winner: squares[a],
+        winCombo: lines[i]
+      };
     }
   }
   return null;
